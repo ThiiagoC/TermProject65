@@ -18,7 +18,7 @@ public:
     void set_prefstyle(string styles[]);
     void set_prefdrink(string drinks[]);
     void set_favrest(string rests[]);
-    
+
 };
 
  void myUser::set_fname(string name){
@@ -146,6 +146,7 @@ int main(){
 
     cout << "Do you already have a profile?\n 1 - Yes\n 2 - No\n\nType the desired option:";
     cin >> opt1;
+    std::cin.ignore(256,'\n');
 
     switch(opt1){
     case 1:
@@ -157,13 +158,13 @@ int main(){
         wfile.open("users.txt",std::ios_base::app);
         cout << "~~ Create new profile ~~\n";
 
-        cout << "First name:\n";
-        cin >> holder;
+        cout << "First name:";
+        std::getline(std::cin,holder,'\n');
         a.set_fname(holder);
         wfile << holder << "\n";
 
-        cout << "Last name:\n";
-        cin >> holder;
+        cout << "Last name:";
+        std::getline(std::cin,holder,'\n');
         a.set_lname(holder);
         wfile << holder << "\n";
 
