@@ -188,7 +188,7 @@ class seasonal_menu:public menu{
     date date_ends;
 };
 
-
+//Random comment
 
 class restaurant{
 public:
