@@ -10,6 +10,7 @@
 #include <string>
 #define style_length 20
 using namespace std;
+
 //This is the base class for an item on the menu. It will bequeath thsese items to side dish, main dish, and drink classes through inheritance. The menus will be a linked list: the elements link to a previous and next item. Functions consist of setting member elements, printing member elements, and returning member elements or pointers to copies of those elements.
 class menu_item{
 protected:
@@ -151,7 +152,7 @@ void menu_item::set_name(){
     cout << "Enter the side dish name >> ";
     getline(cin,nam);
     name = new char[nam.size()+1];
-    while (i<strlen(name)){
+    while (i<nam.size()+1){
         if(i<nam.size()){
             name[i] = nam[i];
         }
@@ -186,12 +187,13 @@ void menu_item::print_name(){
 }
 
 
+
 void menu_item::set_style(){
     int i = 0;
     string sty;
     cout << "Select the style from the list below:\n";
     sty = print_style_options();
-    while (i<strlen(style)){
+    while (i<sty.size()){
         if (i<sty.size()){
             style[i] = sty[i];
         }
@@ -207,6 +209,8 @@ void menu_item::print_style(){
         i++;
     }
 }
+
+
 
 class side_dish:public menu_item{
 public:
@@ -264,12 +268,12 @@ contact::~contact(){
     delete website;
 }
 void contact::set_address(){
-    int i=0;
+    int i = 0;
     string add;
     cout << "Enter the address >> ";
     getline(cin,add);
     address = new char[add.size()+1];
-    while (i<strlen(address)){
+    while (i<add.size()+1){
         if(i<add.size()){
             address[i] = add[i];
         }
@@ -296,12 +300,12 @@ void contact::set_website(){
     cout << "Enter the website >> ";
     getline(cin,add);
     website = new char[add.size()+1];
-    while (i<strlen(address)){
+    while (i<add.size()+1){
         if(i<add.size()){
-            address[i] = add[i];
+            website[i] = add[i];
         }
         else
-            address[i]=' ';
+            website[i]=' ';
         i++;
     }
 }
@@ -445,12 +449,9 @@ restaurant::~restaurant(){
 
 
 int main() {
-    side_dish meat;
-    string buff[2];
-    buff[0] = "tacos and such";
-    buff[1] = "I like big tacos";
-    meat.set_ingredients(buff,2);
-    meat.print_ingredients();
+    contact mollys;
+    mollys.set_website();
+    mollys.print_website();
 }
 
 
