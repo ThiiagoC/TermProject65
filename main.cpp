@@ -7,9 +7,12 @@
 //
 
 #include <iostream>
+#include <fstream>
 #include <string>
 #define style_length 20
+#define menu_size 30
 using namespace std;
+
 
 //This is the base class for an item on the menu. It will bequeath thsese items to side dish, main dish, and drink classes through inheritance. The menus will be a linked list: the elements link to a previous and next item. Functions consist of setting member elements, printing member elements, and returning member elements or pointers to copies of those elements.
 class menu_item{
@@ -43,6 +46,8 @@ public:
     void set_name(char*);
     void print_name();
     void set_style();
+    void set_style(char*);
+    void set_style(string);
     void print_style();
     string get_style(){
         return style;
@@ -51,11 +56,17 @@ public:
         cout<< "Enter a price >>";
         cin >> price;
     }
+    void set_price (float pric){
+        price=pric;
+    }
     void print_price(){
         cout << price;
     }
     float get_price(){
         return price;
+    }
+    void set_for_how_many(int hmany){
+        for_how_many = hmany;
     }
     void set_for_how_many(){
         cout << "Enter how many people the dish is for >>";
@@ -66,6 +77,9 @@ public:
     }
     int get_for_how_many(){
         return for_how_many;
+    }
+    void set_calories(int cal){
+        calories = cal;
     }
     void set_calories(){
         cout << "Enter how many calories the dish is >>";
@@ -187,7 +201,20 @@ void menu_item::print_name(){
 }
 
 
-
+void menu_item::set_style(char* first){
+    strcpy(style,first);
+}
+void menu_item::set_style(string sty){
+    int i =0;
+    while (i<strlen(style)){
+        if(i<sty.size()){
+            style[i] = sty[i];
+        }
+        else
+            style[i]=NULL;
+        i++;
+    }
+}
 void menu_item::set_style(){
     int i = 0;
     string sty;
@@ -323,7 +350,22 @@ void contact::print_website(){
 }
 
 class drink:public menu_item{
+private:
+    bool hot;
+    bool alcoholic;
 public:
+    bool get_temperature(){
+        return hot;
+    }
+    void set_temperature(bool temp){
+        hot = temp;
+    }
+    bool is_alcoholic(){
+        return alcoholic;
+    }
+    void set_alcohol(bool alc){
+        alcoholic = alc;
+    }
     drink();
     ~drink();
 };
@@ -334,8 +376,10 @@ drink::drink(){
     strcpy(name,"holder");
     strcpy(style,"holder");
     price = 0.00;
-    for_how_many = 0;
+    for_how_many =0;
     calories = 0;
+    hot = false;
+    alcoholic = false;
 }
 drink::~drink(){
     delete name;
@@ -348,6 +392,18 @@ private:
 public:
     main_dish();
     ~main_dish();
+    void set_side(side_dish sd){
+        sidedish_pairing = sd;
+    }
+    side_dish get_side(){
+        return sidedish_pairing;
+    }
+    void set_drink(drink d){
+        drink_pairing = d;
+    }
+    drink get_drink(){
+        return drink_pairing;
+    }
 };
 
 main_dish::main_dish(){
@@ -369,8 +425,7 @@ private:
     int num_dishes;
     int num_side_dishes;
     int num_drinks;
-    main_dish* main_dishes_head;
-    main_dish* main_dishes_tail;
+    main_dish main_dishes[menu_size];
     side_dish* side_dishes_head;
     side_dish* side_dishes_tail;
     drink* drinks_head;
@@ -383,8 +438,6 @@ menu::menu(){
     num_dishes = 0;
     num_side_dishes=0;
     num_drinks=0;
-    main_dishes_head = nullptr;
-    main_dishes_tail = nullptr;
     side_dishes_head = nullptr;
     side_dishes_tail = nullptr;
     drinks_head = nullptr;
@@ -449,10 +502,12 @@ restaurant::~restaurant(){
 
 
 int main() {
-    contact mollys;
-    mollys.set_website();
-    mollys.print_website();
+    ofstream myfile;
+    myfile.open ("/Users/williamburger/Desktop/ES65/ES_65_Database/rofl.txt");
+    myfile<< "Test.\n";
+    myfile.close();
 }
+
 
 
 
