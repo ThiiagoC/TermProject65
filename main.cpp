@@ -94,6 +94,9 @@ public:
 };
 
 //Function definitions that were not defined in line.
+
+// Thiago: maybe we can use a switch statement here and use integers for options
+
 string print_style_options(){
     string sty;
     cout << "chinese\n" << "diner\n" << "mexican\n" << "thai\n" << "american comfort\n" << "other\n";
