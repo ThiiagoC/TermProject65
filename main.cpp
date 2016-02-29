@@ -9,23 +9,23 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <sstream>
 #define style_length 20
 #define menu_size 30
 using namespace std;
 
 
 //This is the base class for an item on the menu. It will bequeath thsese items to side dish, main dish, and drink classes through inheritance. The menus will be a linked list: the elements link to a previous and next item. Functions consist of setting member elements, printing member elements, and returning member elements or pointers to copies of those elements.
+//Indexing in database for accessing menu item: Restaurant Index|00|Menu item type index|Menu item array index|menu item member function index
 class menu_item{
 protected:
-    menu_item* previous_item;
     string* ingredients;
-    int num_ingredients;
     char* name;
     char style[style_length];
     float price;
     int for_how_many;
     int calories;
-    menu_item* next_item;
+    int num_ingredients;
 public:
     menu_item();
     ~menu_item();
@@ -39,6 +39,7 @@ public:
     char* get_name(){
         char* nam;
         nam = new char[strlen(name)+1];
+        strcpy(nam,name);
         return nam;
     }
     void set_name();
@@ -60,7 +61,7 @@ public:
         price=pric;
     }
     void print_price(){
-        cout << price;
+        cout << "Price: $"<<price<<"\n";
     }
     float get_price(){
         return price;
@@ -73,7 +74,9 @@ public:
         cin >> for_how_many;
     }
     void print_for_how_many(){
+        cout << "Portion size for ";
         cout << for_how_many;
+        cout << " person\n";
     }
     int get_for_how_many(){
         return for_how_many;
@@ -86,10 +89,16 @@ public:
         cin >> calories;
     }
     void print_calories(){
+        cout <<"Total Calories: ";
         cout << calories;
+        cout << "\n";
     }
     int get_calories(){
         return calories;
+    }
+    void print_menu_item();
+    int get_num_ingredients(){
+        return num_ingredients;
     }
 };
 
@@ -144,6 +153,7 @@ void menu_item::set_ingredients(string* first_pointer,int num){
 }
 void menu_item::print_ingredients(){
     int i=0;
+    cout << "Ingredients: \n";
     while (i<num_ingredients){
         cout << i+1 << ". " << ingredients[i] << "\n";
         i++;
@@ -186,7 +196,7 @@ void menu_item::set_name(char* first){
 void menu_item::set_name(string nam){
     int i =0;
     name = new char[nam.size()+1];
-    while (i<strlen(name)){
+    while (i<nam.size()+1){
         if(i<nam.size()){
             name[i] = nam[i];
         }
@@ -197,10 +207,12 @@ void menu_item::set_name(string nam){
 }
 void menu_item::print_name(){
     int i = 0;
+    cout << "Name: ";
     while(i<strlen(name)){
         cout << name[i];
         i++;
     }
+    cout << "\n";
 }
 
 
@@ -209,7 +221,7 @@ void menu_item::set_style(char* first){
 }
 void menu_item::set_style(string sty){
     int i =0;
-    while (i<strlen(style)){
+    while (i<strlen(style)+1){
         if(i<sty.size()){
             style[i] = sty[i];
         }
@@ -233,19 +245,41 @@ void menu_item::set_style(){
     }
 }
 void menu_item::print_style(){
+    cout << "Style: ";
     int i = 0;
     while(i<strlen(style)){
         cout << style[i];
         i++;
     }
+    cout << "\n";
 }
 
-
+void menu_item::print_menu_item(){
+    print_name();
+    print_ingredients();
+    print_price();
+    print_style();
+    print_for_how_many();
+    print_calories();
+}
 
 class side_dish:public menu_item{
 public:
     side_dish();
     ~side_dish();
+    void operator =(menu_item item){
+        string str;
+        ingredients =item.get_ingredients_pointer();
+        name = item.get_name();
+        price = item.get_price();
+        calories = item.get_calories();
+        for_how_many = item.get_for_how_many();
+        num_ingredients = item.get_num_ingredients();
+        str = item.get_style();
+        for(int i =0;i<style_length;i++){
+            style[i] = str[i];
+        }
+    }
 };
 side_dish::side_dish(){
     ingredients = new string[1];
@@ -258,7 +292,6 @@ side_dish::side_dish(){
     calories = 0;
 }
 side_dish::~side_dish(){
-    delete name;
 }
 
 class contact{
@@ -371,6 +404,24 @@ public:
     }
     drink();
     ~drink();
+    void print_drink(){
+        print_menu_item();
+        cout << hot << "\n";
+        cout << alcoholic << "\n";
+    }
+    void operator =(menu_item item){
+        string str;
+        ingredients =item.get_ingredients_pointer();
+        name = item.get_name();
+        price = item.get_price();
+        calories = item.get_calories();
+        for_how_many = item.get_for_how_many();
+        num_ingredients = item.get_num_ingredients();
+        str = item.get_style();
+        for(int i =0;i<style_length;i++){
+            style[i] = str[i];
+        }
+    }
 };
 drink::drink(){
     ingredients = new string[1];
@@ -385,7 +436,6 @@ drink::drink(){
     alcoholic = false;
 }
 drink::~drink(){
-    delete name;
 }
 
 class main_dish:public menu_item{
@@ -407,6 +457,19 @@ public:
     drink get_drink(){
         return drink_pairing;
     }
+    void operator =(menu_item item){
+        string str;
+        ingredients =item.get_ingredients_pointer();
+        name = item.get_name();
+        price = item.get_price();
+        calories = item.get_calories();
+        for_how_many = item.get_for_how_many();
+        num_ingredients = item.get_num_ingredients();
+        str = item.get_style();
+        for(int i =0;i<style_length;i++){
+            style[i] = str[i];
+        }
+    }
 };
 
 main_dish::main_dish(){
@@ -420,31 +483,55 @@ main_dish::main_dish(){
     calories = 0;
 }
 main_dish :: ~main_dish(){
-    delete name;
 }
 
 class menu{
 private:
+    main_dish main_dishes[menu_size]; //00|00-99 are indexes of
+    side_dish side_dishes[menu_size];
+    drink drinks[menu_size];
     int num_dishes;
     int num_side_dishes;
     int num_drinks;
-    main_dish main_dishes[menu_size];
-    side_dish* side_dishes_head;
-    side_dish* side_dishes_tail;
-    drink* drinks_head;
-    drink* drinks_tail;
 public:
     menu();
+    menu(main_dish md[],int num1,side_dish sd[],int num2,drink d[], int num3){
+        int i=0,j=0,z=0;
+        while (i<num1){
+            main_dishes[i] = md[i];
+            md[i].print_menu_item();
+            i++;
+        }
+        while (j<num2){
+            side_dishes[j] = sd[j];
+            j++;
+        }
+        while(z<num3){
+            drinks[z]=d[z];
+            z++;
+        }
+    }
+    void print_menu(int num1,int num2,int num3){
+        int i=0,j=0,z=0;
+        while (i<num1){
+            main_dishes[i].print_menu_item();
+            i++;
+        }
+        while (j<num2){
+            side_dishes[j].print_menu_item();
+            j++;
+        }
+        while(z<num3){
+            drinks[z].print_drink();
+            z++;
+        }
+    }
     ~menu(){};
 };
 menu::menu(){
     num_dishes = 0;
     num_side_dishes=0;
     num_drinks=0;
-    side_dishes_head = nullptr;
-    side_dishes_tail = nullptr;
-    drinks_head = nullptr;
-    drinks_tail = nullptr;
 }
 
 class date{
@@ -483,8 +570,8 @@ class seasonal_menu:public menu{
 
 class restaurant{
 private:
-    menu menu;
-    char style[style_length];
+    menu menu; //00
+    char style[style_length]; //01
     char* name;
     int distance;
     date date;
@@ -493,6 +580,13 @@ private:
 public:
     restaurant();
     ~restaurant();
+    void set_menu(main_dish* md,int num1,side_dish* sd,int num2,drink* d, int num3){
+        class menu men(md,num1,sd,num2,d,num3);
+        menu =men;
+    }
+    void print_menu(int num1,int num2, int num3){
+        menu.print_menu(num1,num2,num3);
+    }
 };
 restaurant::restaurant(){
     strcpy(style,"holder");
@@ -505,12 +599,120 @@ restaurant::~restaurant(){
 
 
 int main() {
+    restaurant restaurants[10];
+    string key,str;
+    string* ingredients;
+    string ingred[20];
     ofstream myfile;
-    myfile.open ("/Users/williamburger/Desktop/ES65/ES_65_Database/rofl.txt");
-    myfile<< "Test.\n";
+    bool done = false;
+    int i=0;
+    int restaurant_id=-1;
+    char menu_item_id=NULL;
+    char trash=NULL;
+    int j=0;
+    int z=0, q=0,l=0;
+    int t=0;
+    menu_item new_menu_item;
+    drink drink_menu[menu_size];
+    main_dish main_dish_menu[menu_size];
+    side_dish side_dish_menu[menu_size];
+    class menu new_menu;
+    ifstream rfile("/Users/williamburger/Desktop/ES65/ES_65_Database/menu_items.txt");
+    myfile.open ("/Users/williamburger/Desktop/ES65/ES_65_Database/menu_items.txt",std::ios_base::app);
     myfile.close();
+    while(getline(rfile,str)){
+        if(str[0]=='&'){
+            restaurants[restaurant_id].set_menu(main_dish_menu, z, side_dish_menu, q, drink_menu, l);
+        }
+        if(str[0]=='@'){
+            key = str;
+            istringstream iss(key);
+            iss >>trash>>restaurant_id>>menu_item_id;
+        }
+        if(str[0]!='#' and done ==false and str[0]!='@' and str[0]!='0' and str[0]!='1'){
+            ingred[i]=str;
+            i++;
+        }
+        if(str[0]=='#'){
+            done = true;
+        }
+        if(done==true and str[0]!='#'){
+            if(j==0){
+                new_menu_item.set_name(str);
+            }
+            if(j==1){
+                new_menu_item.set_style(str);
+            }
+            if(j==2){
+                istringstream iss(str);
+                float price;
+                iss >> price;
+                new_menu_item.set_price(price);
+            }
+            if(j==3){
+                istringstream iss(str);
+                int how_many;
+                iss >> how_many;
+                new_menu_item.set_for_how_many(how_many);
+            }
+            if(j==4){
+                istringstream iss(str);
+                int calories;
+                iss >> calories;
+                new_menu_item.set_calories(calories);
+            }
+            j++;
+        }
+        if (j==5 and (menu_item_id =='m' or menu_item_id == 's')){
+            ingredients = new string[i];
+            int p=0;
+            while (p<i){
+                ingredients[p]=ingred[p];
+                p++;
+            }
+            new_menu_item.set_ingredients(ingredients,i);
+            if (menu_item_id=='m'){
+                main_dish_menu[z] = new_menu_item;
+                z++;
+            }
+            if (menu_item_id == 's'){
+                side_dish_menu[q] = new_menu_item;
+                q++;
+            }
+            done = false;
+            j=0;
+            i=0;
+        }
+        if (j==5 and menu_item_id == 'd' and t==0){
+            ingredients = new string[i];
+            int p=0;
+            while (p<i){
+                ingredients[p]=ingred[p];
+                p++;
+            }
+            new_menu_item.set_ingredients(ingredients,i);
+            drink_menu[l] = new_menu_item;
+            istringstream iss(str);
+            bool temperature;
+            iss >> temperature;
+            drink_menu[l].set_temperature(temperature);
+            getline(rfile,str);
+            istringstream is(str);
+            bool alcoholic;
+            is >> alcoholic;
+            drink_menu[l].set_alcohol(alcoholic);
+            j++;
+            l++;
+            j=0;
+            i=0;
+            done = false;
+        }
+        
+    }
+    //restaurants[restaurant_id].print_menu(z,q,l);
+    //cout <<z<<"\n"<<q<<"\n"<<l;
+    restaurants[0].print_menu(z,q,l);
 }
-
 
 
 
