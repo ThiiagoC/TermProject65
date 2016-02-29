@@ -12,6 +12,7 @@
 #include <sstream>
 #define style_length 20
 #define menu_size 30
+#define num_restaurants 10
 using namespace std;
 
 
@@ -103,9 +104,6 @@ public:
 };
 
 //Function definitions that were not defined in line.
-
-// Thiago: maybe we can use a switch statement here and use integers for options
-
 string print_style_options(){
     string sty;
     cout << "chinese\n" << "diner\n" << "mexican\n" << "thai\n" << "american comfort\n" << "other\n";
@@ -496,10 +494,12 @@ private:
 public:
     menu();
     menu(main_dish md[],int num1,side_dish sd[],int num2,drink d[], int num3){
+        num_dishes = num1;
+        num_side_dishes = num2;
+        num_drinks = num3;
         int i=0,j=0,z=0;
         while (i<num1){
             main_dishes[i] = md[i];
-            md[i].print_menu_item();
             i++;
         }
         while (j<num2){
@@ -511,17 +511,17 @@ public:
             z++;
         }
     }
-    void print_menu(int num1,int num2,int num3){
+    void print_menu(){
         int i=0,j=0,z=0;
-        while (i<num1){
+        while (i<num_dishes){
             main_dishes[i].print_menu_item();
             i++;
         }
-        while (j<num2){
+        while (j<num_side_dishes){
             side_dishes[j].print_menu_item();
             j++;
         }
-        while(z<num3){
+        while(z<num_drinks){
             drinks[z].print_drink();
             z++;
         }
@@ -584,8 +584,8 @@ public:
         class menu men(md,num1,sd,num2,d,num3);
         menu =men;
     }
-    void print_menu(int num1,int num2, int num3){
-        menu.print_menu(num1,num2,num3);
+    void print_menu(){
+        menu.print_menu();
     }
 };
 restaurant::restaurant(){
@@ -599,7 +599,7 @@ restaurant::~restaurant(){
 
 
 int main() {
-    restaurant restaurants[10];
+    restaurant restaurants[num_restaurants];
     string key,str;
     string* ingredients;
     string ingred[20];
@@ -613,23 +613,24 @@ int main() {
     int z=0, q=0,l=0;
     int t=0;
     menu_item new_menu_item;
-    drink drink_menu[menu_size];
-    main_dish main_dish_menu[menu_size];
-    side_dish side_dish_menu[menu_size];
+    drink drink_menu[num_restaurants][menu_size];
+    main_dish main_dish_menu[num_restaurants][menu_size];
+    side_dish side_dish_menu[num_restaurants][menu_size];
     class menu new_menu;
     ifstream rfile("/Users/williamburger/Desktop/ES65/ES_65_Database/menu_items.txt");
     myfile.open ("/Users/williamburger/Desktop/ES65/ES_65_Database/menu_items.txt",std::ios_base::app);
     myfile.close();
     while(getline(rfile,str)){
         if(str[0]=='&'){
-            restaurants[restaurant_id].set_menu(main_dish_menu, z, side_dish_menu, q, drink_menu, l);
+            restaurants[restaurant_id].set_menu(main_dish_menu[restaurant_id], z, side_dish_menu[restaurant_id], q, drink_menu[restaurant_id], l);
+            i=z=j=q=l=t=0;
         }
         if(str[0]=='@'){
             key = str;
             istringstream iss(key);
             iss >>trash>>restaurant_id>>menu_item_id;
         }
-        if(str[0]!='#' and done ==false and str[0]!='@' and str[0]!='0' and str[0]!='1'){
+        if(str[0]!='#' and done ==false and str[0]!='@' and str[0]!='0' and str[0]!='1' and str[0]!='&'){
             ingred[i]=str;
             i++;
         }
@@ -672,11 +673,11 @@ int main() {
             }
             new_menu_item.set_ingredients(ingredients,i);
             if (menu_item_id=='m'){
-                main_dish_menu[z] = new_menu_item;
+                main_dish_menu[restaurant_id][z] = new_menu_item;
                 z++;
             }
             if (menu_item_id == 's'){
-                side_dish_menu[q] = new_menu_item;
+                side_dish_menu[restaurant_id][q] = new_menu_item;
                 q++;
             }
             done = false;
@@ -691,29 +692,26 @@ int main() {
                 p++;
             }
             new_menu_item.set_ingredients(ingredients,i);
-            drink_menu[l] = new_menu_item;
+            drink_menu[restaurant_id][l] = new_menu_item;
             istringstream iss(str);
             bool temperature;
             iss >> temperature;
-            drink_menu[l].set_temperature(temperature);
+            drink_menu[restaurant_id][l].set_temperature(temperature);
             getline(rfile,str);
             istringstream is(str);
             bool alcoholic;
             is >> alcoholic;
-            drink_menu[l].set_alcohol(alcoholic);
+            drink_menu[restaurant_id][l].set_alcohol(alcoholic);
             j++;
             l++;
             j=0;
             i=0;
             done = false;
         }
-        
     }
-    //restaurants[restaurant_id].print_menu(z,q,l);
-    //cout <<z<<"\n"<<q<<"\n"<<l;
-    restaurants[0].print_menu(z,q,l);
 }
-
+//How to Access Data: The menus are stored in restaurants[i], where i is the index found in the index file.
+//The individual items can be accessed via drink_menu[i][j]/side_dish_menu[i][j]/main_dish_menu[i][j] where i is the indexed restaurant and j is the order of the item.
 
 
 //What functions do we need:
