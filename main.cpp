@@ -27,7 +27,24 @@ protected:
     int for_how_many;
     int calories;
     int num_ingredients;
+    char* restaurant;
 public:
+    void set_restaurant(char* restauran){
+        restaurant = new char[strlen (restauran)];
+        strcpy(restaurant,restauran);
+    }
+    char* get_restaurant(){
+        char* copy;
+        strcpy(copy,restaurant);
+        return copy;
+    }
+    void print_restaurant(){
+        int i = 0;
+        while (i<strlen(restaurant)){
+            cout << restaurant[i];
+            i++;
+        }
+    }
     menu_item();
     ~menu_item();
     string* get_ingredients_pointer(){
@@ -193,8 +210,8 @@ void menu_item::set_name(char* first){
 }
 void menu_item::set_name(string nam){
     int i =0;
-    name = new char[nam.size()+1];
-    while (i<nam.size()+1){
+    name = new char[nam.size()];
+    while (i<nam.size()){
         if(i<nam.size()){
             name[i] = nam[i];
         }
@@ -262,9 +279,14 @@ void menu_item::print_menu_item(){
 }
 
 class side_dish:public menu_item{
+private:
+    char type = 's';
 public:
     side_dish();
     ~side_dish();
+    char get_type(){
+        return type;
+    }
     void operator =(menu_item item){
         string str;
         ingredients =item.get_ingredients_pointer();
@@ -279,6 +301,7 @@ public:
         }
     }
 };
+
 side_dish::side_dish(){
     ingredients = new string[1];
     ingredients[0] = "Unavailable";
@@ -387,7 +410,11 @@ class drink:public menu_item{
 private:
     bool hot;
     bool alcoholic;
+    char type = 'd';
 public:
+    char get_type(){
+        return type;
+    }
     bool get_temperature(){
         return hot;
     }
@@ -440,7 +467,11 @@ class main_dish:public menu_item{
 private:
     side_dish sidedish_pairing;
     drink drink_pairing;
+    char type = 'm';
 public:
+    char get_type(){
+        return type;
+    }
     main_dish();
     ~main_dish();
     void set_side(side_dish sd){
@@ -584,8 +615,26 @@ public:
         class menu men(md,num1,sd,num2,d,num3);
         menu =men;
     }
+    void print_name(){
+        int i=0;
+        while(i<strlen(name)){
+            cout << name[i];
+            i++;
+        }
+    }
     void print_menu(){
         menu.print_menu();
+    }
+    void set_name(string nam){
+        int i=0;
+        name = new char[nam.length()+1];
+        while(i<nam.length()){
+            name[i]=nam[i];
+            i++;
+        }
+    }
+    char* get_name(){
+        return name;
     }
 };
 restaurant::restaurant(){
@@ -598,12 +647,25 @@ restaurant::~restaurant(){
 }
 
 
+//Sorting Functions
+
+void sort_main_dishes_price(main_dish* main_dish_menu){
+    int price_1;
+    int price_2;
+    int i;
+    bool done = false;
+    while(done ==false){
+        
+    }
+}
+
 int main() {
     restaurant restaurants[num_restaurants];
     string key,str;
     string* ingredients;
     string ingred[20];
     ofstream myfile;
+    ofstream restfile;
     bool done = false;
     int i=0;
     int restaurant_id=-1;
@@ -618,8 +680,15 @@ int main() {
     side_dish side_dish_menu[num_restaurants][menu_size];
     class menu new_menu;
     ifstream rfile("/Users/williamburger/Desktop/ES65/ES_65_Database/menu_items.txt");
-    myfile.open ("/Users/williamburger/Desktop/ES65/ES_65_Database/menu_items.txt",std::ios_base::app);
-    myfile.close();
+    ifstream rrestfile("/Users/williamburger/Desktop/ES65/ES_65_Database/restaurants.txt");
+    while(getline(rrestfile,str)){
+        int i;
+        string rest_name,rest_name1,rest_name2;
+        istringstream iss(str);
+        iss >> i >> rest_name1 >>rest_name2;
+        rest_name = rest_name1+" "+rest_name2;
+        restaurants[i].set_name(rest_name);
+    }
     while(getline(rfile,str)){
         if(str[0]=='&'){
             restaurants[restaurant_id].set_menu(main_dish_menu[restaurant_id], z, side_dish_menu[restaurant_id], q, drink_menu[restaurant_id], l);
@@ -674,10 +743,12 @@ int main() {
             new_menu_item.set_ingredients(ingredients,i);
             if (menu_item_id=='m'){
                 main_dish_menu[restaurant_id][z] = new_menu_item;
+                main_dish_menu[restaurant_id][l].set_restaurant(restaurants[restaurant_id].get_name());
                 z++;
             }
             if (menu_item_id == 's'){
                 side_dish_menu[restaurant_id][q] = new_menu_item;
+                side_dish_menu[restaurant_id][l].set_restaurant(restaurants[restaurant_id].get_name());
                 q++;
             }
             done = false;
@@ -702,6 +773,7 @@ int main() {
             bool alcoholic;
             is >> alcoholic;
             drink_menu[restaurant_id][l].set_alcohol(alcoholic);
+            drink_menu[restaurant_id][l].set_restaurant(restaurants[restaurant_id].get_name());
             j++;
             l++;
             j=0;
