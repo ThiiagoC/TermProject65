@@ -210,14 +210,12 @@ void menu_item::set_name(char* first){
 }
 void menu_item::set_name(string nam){
     int i =0;
-    name = new char[nam.size()];
-    while (i<nam.size()){
-        if(i<nam.size()){
+    name = new char[nam.length()];
+    while (i<nam.length()){
+        if(i<nam.length()){
             name[i] = nam[i];
+            i++;
         }
-        else
-            name[i]=' ';
-        i++;
     }
 }
 void menu_item::print_name(){
@@ -348,8 +346,6 @@ contact::contact(){
     strcpy(website,"holder");
 }
 contact::~contact(){
-    delete address;
-    delete website;
 }
 void contact::set_address(){
     int i = 0;
@@ -523,6 +519,24 @@ private:
     int num_side_dishes;
     int num_drinks;
 public:
+    main_dish* get_main_dishes(){
+        return main_dishes;
+    }
+    side_dish* get_side_dishes(){
+        return side_dishes;
+    }
+    drink* get_drinks(){
+        return drinks;
+    }
+    int get_num_drinks(){
+        return num_drinks;
+    }
+    int get_num_side_dishes(){
+        return num_side_dishes;
+    }
+    int get_num_main_dishes(){
+        return num_dishes;
+    }
     menu();
     menu(main_dish md[],int num1,side_dish sd[],int num2,drink d[], int num3){
         num_dishes = num1;
@@ -545,14 +559,17 @@ public:
     void print_menu(){
         int i=0,j=0,z=0;
         while (i<num_dishes){
+            cout << "-------------------\n";
             main_dishes[i].print_menu_item();
             i++;
         }
         while (j<num_side_dishes){
+            cout << "-------------------\n";
             side_dishes[j].print_menu_item();
             j++;
         }
         while(z<num_drinks){
+            cout << "-------------------\n";
             drinks[z].print_drink();
             z++;
         }
@@ -636,6 +653,9 @@ public:
     char* get_name(){
         return name;
     }
+    class menu get_menu(){
+        return menu;
+    }
 };
 restaurant::restaurant(){
     strcpy(style,"holder");
@@ -643,20 +663,54 @@ restaurant::restaurant(){
     strcpy(name,"holder");
 }
 restaurant::~restaurant(){
-    delete name;
 }
 
 
 //Sorting Functions
 
-void sort_main_dishes_price(main_dish* main_dish_menu){
-    int price_1;
-    int price_2;
-    int i;
+main_dish* sort_main_dishes_price(restaurant* restaurants,int total_restaurants,main_dish* main_dish_price){
+    class menu this_menu;
+    main_dish* temporary;
+    main_dish hold;
+    int total_number_main_dishes=0;
+    int i=0;
     bool done = false;
-    while(done ==false){
-        
+    while(i<total_restaurants){
+        this_menu = restaurants[i].get_menu();
+        total_number_main_dishes += this_menu.get_num_main_dishes();
+        i++;
     }
+    main_dish_price = new main_dish[total_number_main_dishes];
+    i = 0;
+    int z = 0;
+    while(i<total_restaurants){
+        this_menu = restaurants[i].get_menu();
+        int j=0;
+        while(j<this_menu.get_num_main_dishes()){
+            temporary = this_menu.get_main_dishes();
+            main_dish_price[z] = temporary[j];
+            j++;
+            z++;
+        }
+        i++;
+    }
+    while(done==false){
+        int p = 0;
+        int count = 0;
+        while (p<total_number_main_dishes-1){
+            if(main_dish_price[p].get_price()>main_dish_price[p+1].get_price()){
+                hold = main_dish_price[p];
+                main_dish_price[p] = main_dish_price[p+1];
+                main_dish_price[p+1]=hold;
+                count++;
+            }
+            p++;
+        }
+        if(count ==0){
+            done = true;
+        }
+    }
+    return main_dish_price;
 }
 
 int main() {
@@ -671,14 +725,15 @@ int main() {
     int restaurant_id=-1;
     char menu_item_id=NULL;
     char trash=NULL;
+    int total_restaurants=0;
     int j=0;
     int z=0, q=0,l=0;
     int t=0;
+    main_dish* main_price_sort;
     menu_item new_menu_item;
     drink drink_menu[num_restaurants][menu_size];
     main_dish main_dish_menu[num_restaurants][menu_size];
     side_dish side_dish_menu[num_restaurants][menu_size];
-    class menu new_menu;
     ifstream rfile("/Users/williamburger/Desktop/ES65/ES_65_Database/menu_items.txt");
     ifstream rrestfile("/Users/williamburger/Desktop/ES65/ES_65_Database/restaurants.txt");
     while(getline(rrestfile,str)){
@@ -693,6 +748,7 @@ int main() {
         if(str[0]=='&'){
             restaurants[restaurant_id].set_menu(main_dish_menu[restaurant_id], z, side_dish_menu[restaurant_id], q, drink_menu[restaurant_id], l);
             i=z=j=q=l=t=0;
+            total_restaurants++;
         }
         if(str[0]=='@'){
             key = str;
@@ -780,6 +836,13 @@ int main() {
             i=0;
             done = false;
         }
+    }
+    //sort_dishes_price(restaurants,total_restaurants);
+    main_price_sort = sort_main_dishes_price(restaurants,total_restaurants,main_price_sort);
+    i=0;
+    while(i<4){
+        main_price_sort[i].print_menu_item();
+        i++;
     }
 }
 //How to Access Data: The menus are stored in restaurants[i], where i is the index found in the index file.
