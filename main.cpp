@@ -713,6 +713,100 @@ main_dish* sort_main_dishes_price(restaurant* restaurants,int total_restaurants,
     return main_dish_price;
 }
 
+side_dish* sort_side_dishes_price(restaurant* restaurants,int total_restaurants,side_dish* side_dish_price){
+    class menu this_menu;
+    side_dish* temporary;
+    side_dish hold;
+    int total_number_side_dishes=0;
+    int i=0;
+    bool done = false;
+    while(i<total_restaurants){
+        this_menu = restaurants[i].get_menu();
+        total_number_side_dishes += this_menu.get_num_side_dishes();
+        i++;
+    }
+    side_dish_price = new side_dish[total_number_side_dishes];
+    i = 0;
+    int z = 0;
+    while(i<total_restaurants){
+        this_menu = restaurants[i].get_menu();
+        int j=0;
+        while(j<this_menu.get_num_main_dishes()){
+            temporary = this_menu.get_side_dishes();
+            if (temporary[j].get_price()!=0){
+                side_dish_price[z] = temporary[j];
+                z++;
+            }
+            j++;
+        }
+        i++;
+    }
+    while(done==false){
+        int p = 0;
+        int count = 0;
+        while (p<total_number_side_dishes-1){
+            if(side_dish_price[p].get_price()>side_dish_price[p+1].get_price()){
+                hold = side_dish_price[p];
+                side_dish_price[p] = side_dish_price[p+1];
+                side_dish_price[p+1]=hold;
+                count++;
+            }
+            p++;
+        }
+        if(count ==0){
+            done = true;
+        }
+    }
+    return side_dish_price;
+}
+
+drink* sort_drinks_price(restaurant* restaurants,int total_restaurants,drink* drinks_price){
+    class menu this_menu;
+    drink* temporary;
+    drink hold;
+    int total_number_drinks=0;
+    int i=0;
+    bool done = false;
+    while(i<total_restaurants){
+        this_menu = restaurants[i].get_menu();
+        total_number_drinks += this_menu.get_num_drinks();
+        i++;
+    }
+    drinks_price = new drink[total_number_drinks];
+    i = 0;
+    int z = 0;
+    while(i<total_restaurants){
+        this_menu = restaurants[i].get_menu();
+        int j=0;
+        while(j<this_menu.get_num_drinks()){
+            temporary = this_menu.get_drinks();
+            if (temporary[j].get_price()!=0){
+                drinks_price[z] = temporary[j];
+                z++;
+            }
+            j++;
+        }
+        i++;
+    }
+    while(done==false){
+        int p = 0;
+        int count = 0;
+        while (p<total_number_drinks-1){
+            if(drinks_price[p].get_price()>drinks_price[p+1].get_price()){
+                hold = drinks_price[p];
+                drinks_price[p] = drinks_price[p+1];
+                drinks_price[p+1]=hold;
+                count++;
+            }
+            p++;
+        }
+        if(count ==0){
+            done = true;
+        }
+    }
+    return drinks_price;
+}
+
 int main() {
     restaurant restaurants[num_restaurants];
     string key,str;
@@ -730,6 +824,8 @@ int main() {
     int z=0, q=0,l=0;
     int t=0;
     main_dish* main_price_sort;
+    side_dish* side_price_sort;
+    drink* drink_price_sort;
     menu_item new_menu_item;
     drink drink_menu[num_restaurants][menu_size];
     main_dish main_dish_menu[num_restaurants][menu_size];
@@ -839,9 +935,21 @@ int main() {
     }
     //sort_dishes_price(restaurants,total_restaurants);
     main_price_sort = sort_main_dishes_price(restaurants,total_restaurants,main_price_sort);
+    side_price_sort = sort_side_dishes_price(restaurants,total_restaurants, side_price_sort);
+    drink_price_sort = sort_drinks_price(restaurants,total_restaurants,drink_price_sort);
     i=0;
     while(i<4){
         main_price_sort[i].print_menu_item();
+        i++;
+    }
+    i=0;
+    while(i<2){
+        side_price_sort[i].print_menu_item();
+        i++;
+    }
+    i=0;
+    while(i<5){
+        drink_price_sort[i].print_menu_item();
         i++;
     }
 }
