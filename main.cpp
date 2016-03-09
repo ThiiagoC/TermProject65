@@ -10,6 +10,7 @@
 #include <fstream>
 #include <string>
 #include <sstream>
+#include <cstring>
 #define style_length 20
 #define menu_size 30
 #define num_restaurants 10
@@ -27,8 +28,22 @@ protected:
     int for_how_many;
     int calories;
     int num_ingredients;
+    int rest_id;
+    int position_in_restaurant;
     char* restaurant;
 public:
+    void set_rest_id(int id){
+        rest_id = id;
+    }
+    void set_position_in_restaurant(int pos){
+        position_in_restaurant=pos;
+    }
+    int get_rest_id(){
+        return rest_id;
+    }
+    int get_position_in_rest(){
+        return position_in_restaurant;
+    }
     void set_restaurant(char* restauran){
         restaurant = new char[strlen (restauran)];
         strcpy(restaurant,restauran);
@@ -55,10 +70,7 @@ public:
     void set_ingredients(string*,int);
     void print_ingredients();
     char* get_name(){
-        char* nam;
-        nam = new char[strlen(name)+1];
-        strcpy(nam,name);
-        return nam;
+        return name;
     }
     void set_name();
     void set_name(string);
@@ -282,11 +294,16 @@ private:
 public:
     side_dish();
     ~side_dish();
+    void print_type(){
+        cout << type;
+    }
     char get_type(){
         return type;
     }
     void operator =(menu_item item){
         string str;
+        rest_id = item.get_rest_id();
+        position_in_restaurant = item.get_position_in_rest();
         ingredients =item.get_ingredients_pointer();
         name = item.get_name();
         price = item.get_price();
@@ -408,6 +425,9 @@ private:
     bool alcoholic;
     char type = 'd';
 public:
+    void print_type(){
+        cout << type;
+    }
     char get_type(){
         return type;
     }
@@ -432,6 +452,8 @@ public:
     }
     void operator =(menu_item item){
         string str;
+        rest_id = item.get_rest_id();
+        position_in_restaurant = item.get_position_in_rest();
         ingredients =item.get_ingredients_pointer();
         name = item.get_name();
         price = item.get_price();
@@ -465,6 +487,9 @@ private:
     drink drink_pairing;
     char type = 'm';
 public:
+    void print_type(){
+        cout << type;
+    }
     char get_type(){
         return type;
     }
@@ -484,6 +509,8 @@ public:
     }
     void operator =(menu_item item){
         string str;
+        rest_id = item.get_rest_id();
+        position_in_restaurant = item.get_position_in_rest();
         ingredients =item.get_ingredients_pointer();
         name = item.get_name();
         price = item.get_price();
@@ -807,6 +834,61 @@ drink* sort_drinks_price(restaurant* restaurants,int total_restaurants,drink* dr
     return drinks_price;
 }
 
+void print_sort_to_file(string file_name, restaurant* restaurants,int total_restaurants,drink*drinksort,main_dish*mainsort,side_dish*sidesort){
+    class menu this_menu;
+    ofstream myfile;
+    myfile.open(file_name);
+    int total_number_drinks=0;
+    int total_number_main_dishes=0;
+    int total_number_side_dishes=0;
+    int i=0;
+    while(i<total_restaurants){
+        this_menu = restaurants[i].get_menu();
+        total_number_drinks += this_menu.get_num_drinks();
+        i++;
+    }
+    i=0;
+    while(i<total_restaurants){
+        this_menu = restaurants[i].get_menu();
+        total_number_side_dishes += this_menu.get_num_side_dishes();
+        i++;
+    }
+    i=0;
+    while(i<total_restaurants){
+        this_menu = restaurants[i].get_menu();
+        total_number_main_dishes += this_menu.get_num_main_dishes();
+        i++;
+    }
+    i=0;
+    while(i<total_number_drinks){
+        myfile<<i<<" ";
+        myfile<<drinksort[i].get_type()<<" ";
+        myfile<<drinksort[i].get_rest_id()<<" ";
+        myfile<<drinksort[i].get_position_in_rest()<<" ";
+        myfile<<drinksort[i].get_price()<<"\n";
+        i++;
+    }
+    i=0;
+    while(i<total_number_main_dishes){
+        myfile<<i<<" ";
+        myfile<<mainsort[i].get_type()<<" ";
+        myfile<<mainsort[i].get_rest_id()<<" ";
+        myfile<<mainsort[i].get_position_in_rest()<<" ";
+        myfile<<mainsort[i].get_price()<<"\n";
+        i++;
+    }
+    i=0;
+    while(i<total_number_side_dishes){
+        myfile<<i<< " ";
+        myfile<<sidesort[i].get_type()<< " ";
+        myfile<<sidesort[i].get_rest_id()<<" ";
+        myfile<<sidesort[i].get_position_in_rest()<<" ";
+        myfile<<sidesort[i].get_price()<<"\n";
+        i++;
+    }
+    
+}
+
 int main() {
     restaurant restaurants[num_restaurants];
     string key,str;
@@ -816,6 +898,7 @@ int main() {
     ofstream restfile;
     bool done = false;
     int i=0;
+    int position = -1;
     int restaurant_id=-1;
     char menu_item_id=NULL;
     char trash=NULL;
@@ -849,7 +932,9 @@ int main() {
         if(str[0]=='@'){
             key = str;
             istringstream iss(key);
-            iss >>trash>>restaurant_id>>menu_item_id;
+            iss >>trash>>restaurant_id>>menu_item_id>>position;
+            new_menu_item.set_position_in_restaurant(position);
+            new_menu_item.set_rest_id(restaurant_id);
         }
         if(str[0]!='#' and done ==false and str[0]!='@' and str[0]!='0' and str[0]!='1' and str[0]!='&'){
             ingred[i]=str;
@@ -939,19 +1024,23 @@ int main() {
     drink_price_sort = sort_drinks_price(restaurants,total_restaurants,drink_price_sort);
     i=0;
     while(i<4){
-        main_price_sort[i].print_menu_item();
+        main_price_sort[i].print_type();
+        main_price_sort[i].print_price();
         i++;
     }
     i=0;
     while(i<2){
-        side_price_sort[i].print_menu_item();
+        side_price_sort[i].print_type();
+        side_price_sort[i].print_price();
         i++;
     }
     i=0;
     while(i<5){
-        drink_price_sort[i].print_menu_item();
+        drink_price_sort[i].print_type();
+        drink_price_sort[i].print_price();
         i++;
     }
+    print_sort_to_file("/Users/williamburger/Desktop/ES65/ES_65_Database/sort_price.txt", restaurants, total_restaurants, drink_price_sort, main_price_sort, side_price_sort);
 }
 //How to Access Data: The menus are stored in restaurants[i], where i is the index found in the index file.
 //The individual items can be accessed via drink_menu[i][j]/side_dish_menu[i][j]/main_dish_menu[i][j] where i is the indexed restaurant and j is the order of the item.
