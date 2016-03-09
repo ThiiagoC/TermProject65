@@ -783,6 +783,50 @@ main_dish* sort_main_dishes_name(restaurant* restaurants,int total_restaurants,m
     }
     return main_dish_price;
 }
+main_dish* sort_main_dishes_style(restaurant* restaurants,int total_restaurants,main_dish* main_dish_price){
+    class menu this_menu;
+    main_dish* temporary;
+    main_dish hold;
+    int total_number_main_dishes=0;
+    int i=0;
+    bool done = false;
+    while(i<total_restaurants){
+        this_menu = restaurants[i].get_menu();
+        total_number_main_dishes += this_menu.get_num_main_dishes();
+        i++;
+    }
+    main_dish_price = new main_dish[total_number_main_dishes];
+    i = 0;
+    int z = 0;
+    while(i<total_restaurants){
+        this_menu = restaurants[i].get_menu();
+        int j=0;
+        while(j<this_menu.get_num_main_dishes()){
+            temporary = this_menu.get_main_dishes();
+            main_dish_price[z] = temporary[j];
+            j++;
+            z++;
+        }
+        i++;
+    }
+    while(done==false){
+        int p = 0;
+        int count = 0;
+        while (p<total_number_main_dishes-1){
+            if(main_dish_price[p].get_style().compare(main_dish_price[p+1].get_style())>0){
+                hold = main_dish_price[p];
+                main_dish_price[p] = main_dish_price[p+1];
+                main_dish_price[p+1]=hold;
+                count++;
+            }
+            p++;
+        }
+        if(count ==0){
+            done = true;
+        }
+    }
+    return main_dish_price;
+}
 
 side_dish* sort_side_dishes_price(restaurant* restaurants,int total_restaurants,side_dish* side_dish_price){
     class menu this_menu;
@@ -863,6 +907,52 @@ side_dish* sort_side_dishes_name(restaurant* restaurants,int total_restaurants,s
         int count = 0;
         while (p<total_number_side_dishes-1){
             if(strcmp(side_dish_price[p].get_name(),side_dish_price[p+1].get_name())>0){
+                hold = side_dish_price[p];
+                side_dish_price[p] = side_dish_price[p+1];
+                side_dish_price[p+1]=hold;
+                count++;
+            }
+            p++;
+        }
+        if(count ==0){
+            done = true;
+        }
+    }
+    return side_dish_price;
+}
+side_dish* sort_side_dishes_style(restaurant* restaurants,int total_restaurants,side_dish* side_dish_price){
+    class menu this_menu;
+    side_dish* temporary;
+    side_dish hold;
+    int total_number_side_dishes=0;
+    int i=0;
+    bool done = false;
+    while(i<total_restaurants){
+        this_menu = restaurants[i].get_menu();
+        total_number_side_dishes += this_menu.get_num_side_dishes();
+        i++;
+    }
+    side_dish_price = new side_dish[total_number_side_dishes];
+    i = 0;
+    int z = 0;
+    while(i<total_restaurants){
+        this_menu = restaurants[i].get_menu();
+        int j=0;
+        while(j<this_menu.get_num_main_dishes()){
+            temporary = this_menu.get_side_dishes();
+            if (temporary[j].get_price()!=0){
+                side_dish_price[z] = temporary[j];
+                z++;
+            }
+            j++;
+        }
+        i++;
+    }
+    while(done==false){
+        int p = 0;
+        int count = 0;
+        while (p<total_number_side_dishes-1){
+            if(side_dish_price[p].get_style().compare(side_dish_price[p+1].get_style())>0){
                 hold = side_dish_price[p];
                 side_dish_price[p] = side_dish_price[p+1];
                 side_dish_price[p+1]=hold;
@@ -969,6 +1059,52 @@ drink* sort_drinks_name(restaurant* restaurants,int total_restaurants,drink* dri
     }
     return drinks_price;
 }
+drink* sort_drinks_style(restaurant* restaurants,int total_restaurants,drink* drinks_price){
+    class menu this_menu;
+    drink* temporary;
+    drink hold;
+    int total_number_drinks=0;
+    int i=0;
+    bool done = false;
+    while(i<total_restaurants){
+        this_menu = restaurants[i].get_menu();
+        total_number_drinks += this_menu.get_num_drinks();
+        i++;
+    }
+    drinks_price = new drink[total_number_drinks];
+    i = 0;
+    int z = 0;
+    while(i<total_restaurants){
+        this_menu = restaurants[i].get_menu();
+        int j=0;
+        while(j<this_menu.get_num_drinks()){
+            temporary = this_menu.get_drinks();
+            if (temporary[j].get_price()!=0){
+                drinks_price[z] = temporary[j];
+                z++;
+            }
+            j++;
+        }
+        i++;
+    }
+    while(done==false){
+        int p = 0;
+        int count = 0;
+        while (p<total_number_drinks-1){
+            if(drinks_price[p].get_style().compare(drinks_price[p+1].get_style())>0){
+                hold = drinks_price[p];
+                drinks_price[p] = drinks_price[p+1];
+                drinks_price[p+1]=hold;
+                count++;
+            }
+            p++;
+        }
+        if(count ==0){
+            done = true;
+        }
+    }
+    return drinks_price;
+}
 
 void print_sort_to_file(int sortby,string file_name, restaurant* restaurants,int total_restaurants,drink*drinksort,main_dish*mainsort,side_dish*sidesort){
     class menu this_menu;
@@ -1014,6 +1150,16 @@ void print_sort_to_file(int sortby,string file_name, restaurant* restaurants,int
             }
             myfile<<"\n";
         }
+        if (sortby==2){
+            int j=0;
+            string sty;
+            sty = drinksort[i].get_style();
+            while(j<sty.length()){
+                myfile<<sty[j];
+                j++;
+            }
+            myfile<<"\n";
+        }
         i++;
     }
     i=0;
@@ -1032,6 +1178,16 @@ void print_sort_to_file(int sortby,string file_name, restaurant* restaurants,int
             nam = mainsort[i].get_name();
             while (j<strlen(mainsort[i].get_name())) {
                 myfile<<nam[j];
+                j++;
+            }
+            myfile<<"\n";
+        }
+        if (sortby==2){
+            int j=0;
+            string sty;
+            sty = mainsort[i].get_style();
+            while(j<sty.length()){
+                myfile<<sty[j];
                 j++;
             }
             myfile<<"\n";
@@ -1055,6 +1211,16 @@ void print_sort_to_file(int sortby,string file_name, restaurant* restaurants,int
             nam = sidesort[i].get_name();
             while (j<strlen(sidesort[i].get_name())) {
                 myfile<<nam[j];
+                j++;
+            }
+            myfile<<"\n";
+        }
+        if (sortby==2){
+            int j=0;
+            string sty;
+            sty = sidesort[i].get_style();
+            while(j<sty.length()){
+                myfile<<sty[j];
                 j++;
             }
             myfile<<"\n";
@@ -1205,11 +1371,11 @@ int main() {
     side_price_sort = sort_side_dishes_name(restaurants,total_restaurants, side_price_sort);
     drink_price_sort = sort_drinks_name(restaurants,total_restaurants,drink_price_sort);
     print_sort_to_file(1,"/Users/williamburger/Desktop/ES65/ES_65_Database/sort_name.txt", restaurants, total_restaurants, drink_price_sort, main_price_sort, side_price_sort);
+    main_price_sort = sort_main_dishes_style(restaurants,total_restaurants,main_price_sort);
+    side_price_sort = sort_side_dishes_style(restaurants,total_restaurants, side_price_sort);
+    drink_price_sort = sort_drinks_style(restaurants,total_restaurants,drink_price_sort);
+    print_sort_to_file(2,"/Users/williamburger/Desktop/ES65/ES_65_Database/sort_style.txt", restaurants, total_restaurants, drink_price_sort, main_price_sort, side_price_sort);
 }
 
 //How to Access Data: The menus are stored in restaurants[i], where i is the index found in the index file.
-//The individual items can be accessed via drink_menu[i][j]/side_dish_menu[i][j]/main_dish_menu[i][j] where i is the indexed restaurant and j is the order of the item.
-
-
-//What functions do we need:
-//Data access, Data manipulation,
+//The individual items can be accessed via drink_menu[i][j]/side_dish_menu[i][j]/main_dish_menu[i][j] where i is the indexed restaurant and j is the order of the it
