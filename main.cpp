@@ -14,11 +14,30 @@
 #define style_length 20
 #define menu_size 30
 #define num_restaurants 10
+#define num_unique_ingredients 30
 using namespace std;
 
 
 //This is the base class for an item on the menu. It will bequeath thsese items to side dish, main dish, and drink classes through inheritance. The menus will be a linked list: the elements link to a previous and next item. Functions consist of setting member elements, printing member elements, and returning member elements or pointers to copies of those elements.
 //Indexing in database for accessing menu item: Restaurant Index|00|Menu item type index|Menu item array index|menu item member function index
+class ingredient{
+public:
+    string name;
+    int restaurant_ID[num_restaurants];
+    int menu_ID[num_restaurants];
+    char type;
+    ingredient(){
+        name = "";
+        for(int i=0;i<num_restaurants;i++){
+            restaurant_ID[i]=i;
+        }
+        for(int i=0;i<num_restaurants;i++){
+            menu_ID[i] = -1;
+        }
+        type = NULL;
+    }
+};
+
 class menu_item{
 protected:
     string* ingredients;
@@ -739,6 +758,50 @@ main_dish* sort_main_dishes_price(restaurant* restaurants,int total_restaurants,
     }
     return main_dish_price;
 }
+main_dish* sort_main_dishes_calories(restaurant* restaurants,int total_restaurants,main_dish* main_dish_price){
+    class menu this_menu;
+    main_dish* temporary;
+    main_dish hold;
+    int total_number_main_dishes=0;
+    int i=0;
+    bool done = false;
+    while(i<total_restaurants){
+        this_menu = restaurants[i].get_menu();
+        total_number_main_dishes += this_menu.get_num_main_dishes();
+        i++;
+    }
+    main_dish_price = new main_dish[total_number_main_dishes];
+    i = 0;
+    int z = 0;
+    while(i<total_restaurants){
+        this_menu = restaurants[i].get_menu();
+        int j=0;
+        while(j<this_menu.get_num_main_dishes()){
+            temporary = this_menu.get_main_dishes();
+            main_dish_price[z] = temporary[j];
+            j++;
+            z++;
+        }
+        i++;
+    }
+    while(done==false){
+        int p = 0;
+        int count = 0;
+        while (p<total_number_main_dishes-1){
+            if(main_dish_price[p].get_calories()>main_dish_price[p+1].get_calories()){
+                hold = main_dish_price[p];
+                main_dish_price[p] = main_dish_price[p+1];
+                main_dish_price[p+1]=hold;
+                count++;
+            }
+            p++;
+        }
+        if(count ==0){
+            done = true;
+        }
+    }
+    return main_dish_price;
+}
 main_dish* sort_main_dishes_name(restaurant* restaurants,int total_restaurants,main_dish* main_dish_price){
     class menu this_menu;
     main_dish* temporary;
@@ -861,6 +924,52 @@ side_dish* sort_side_dishes_price(restaurant* restaurants,int total_restaurants,
         int count = 0;
         while (p<total_number_side_dishes-1){
             if(side_dish_price[p].get_price()>side_dish_price[p+1].get_price()){
+                hold = side_dish_price[p];
+                side_dish_price[p] = side_dish_price[p+1];
+                side_dish_price[p+1]=hold;
+                count++;
+            }
+            p++;
+        }
+        if(count ==0){
+            done = true;
+        }
+    }
+    return side_dish_price;
+}
+side_dish* sort_side_dishes_calories(restaurant* restaurants,int total_restaurants,side_dish* side_dish_price){
+    class menu this_menu;
+    side_dish* temporary;
+    side_dish hold;
+    int total_number_side_dishes=0;
+    int i=0;
+    bool done = false;
+    while(i<total_restaurants){
+        this_menu = restaurants[i].get_menu();
+        total_number_side_dishes += this_menu.get_num_side_dishes();
+        i++;
+    }
+    side_dish_price = new side_dish[total_number_side_dishes];
+    i = 0;
+    int z = 0;
+    while(i<total_restaurants){
+        this_menu = restaurants[i].get_menu();
+        int j=0;
+        while(j<this_menu.get_num_main_dishes()){
+            temporary = this_menu.get_side_dishes();
+            if (temporary[j].get_price()!=0){
+                side_dish_price[z] = temporary[j];
+                z++;
+            }
+            j++;
+        }
+        i++;
+    }
+    while(done==false){
+        int p = 0;
+        int count = 0;
+        while (p<total_number_side_dishes-1){
+            if(side_dish_price[p].get_calories()>side_dish_price[p+1].get_calories()){
                 hold = side_dish_price[p];
                 side_dish_price[p] = side_dish_price[p+1];
                 side_dish_price[p+1]=hold;
@@ -1013,6 +1122,52 @@ drink* sort_drinks_price(restaurant* restaurants,int total_restaurants,drink* dr
     }
     return drinks_price;
 }
+drink* sort_drinks_calories(restaurant* restaurants,int total_restaurants,drink* drinks_price){
+    class menu this_menu;
+    drink* temporary;
+    drink hold;
+    int total_number_drinks=0;
+    int i=0;
+    bool done = false;
+    while(i<total_restaurants){
+        this_menu = restaurants[i].get_menu();
+        total_number_drinks += this_menu.get_num_drinks();
+        i++;
+    }
+    drinks_price = new drink[total_number_drinks];
+    i = 0;
+    int z = 0;
+    while(i<total_restaurants){
+        this_menu = restaurants[i].get_menu();
+        int j=0;
+        while(j<this_menu.get_num_drinks()){
+            temporary = this_menu.get_drinks();
+            if (temporary[j].get_price()!=0){
+                drinks_price[z] = temporary[j];
+                z++;
+            }
+            j++;
+        }
+        i++;
+    }
+    while(done==false){
+        int p = 0;
+        int count = 0;
+        while (p<total_number_drinks-1){
+            if(drinks_price[p].get_calories()>drinks_price[p+1].get_calories()){
+                hold = drinks_price[p];
+                drinks_price[p] = drinks_price[p+1];
+                drinks_price[p+1]=hold;
+                count++;
+            }
+            p++;
+        }
+        if(count ==0){
+            done = true;
+        }
+    }
+    return drinks_price;
+}
 drink* sort_drinks_name(restaurant* restaurants,int total_restaurants,drink* drinks_price){
     class menu this_menu;
     drink* temporary;
@@ -1132,7 +1287,7 @@ void print_sort_to_file(int sortby,string file_name, restaurant* restaurants,int
         i++;
     }
     i=0;
-    while(i<total_number_drinks-1){
+    while(i<total_number_drinks){
         myfile<<i<<" ";
         myfile<<drinksort[i].get_type()<<" ";
         myfile<<drinksort[i].get_rest_id()<<" ";
@@ -1159,6 +1314,9 @@ void print_sort_to_file(int sortby,string file_name, restaurant* restaurants,int
                 j++;
             }
             myfile<<"\n";
+        }
+        if(sortby==3){
+            myfile<<drinksort[i].get_calories()<<"\n";
         }
         i++;
     }
@@ -1192,7 +1350,9 @@ void print_sort_to_file(int sortby,string file_name, restaurant* restaurants,int
             }
             myfile<<"\n";
         }
-        
+        if(sortby==3){
+            myfile<<mainsort[i].get_calories()<<"\n";
+        }
         i++;
     }
     i=0;
@@ -1225,9 +1385,78 @@ void print_sort_to_file(int sortby,string file_name, restaurant* restaurants,int
             }
             myfile<<"\n";
         }
+        if(sortby==3){
+            myfile<<sidesort[i].get_calories()<<"\n";
+        }
         i++;
     }
     
+}
+
+void print_and_sort_ingredients(int total,class ingredient*array,string file_name){
+    ofstream myfile;
+    myfile.open(file_name);
+    int i =0;
+    class ingredient holder;
+    int j=0;
+    bool done = false;
+    while(done == false){
+        int swaps = 0;
+        j=0;
+        while(j<total-1){
+            if(array[j].name.compare(array[j+1].name)>0){
+                holder = array[j];
+                array[j]=array[j+1];
+                array[j+1]=holder;
+                swaps++;
+            }
+            j++;
+        }
+        if(swaps==0){
+            done = true;
+        }
+    }
+    i=0;
+    while(i<total){
+        int j=0;
+        while (j<num_restaurants){
+            if (array[i].menu_ID[j]>-1){
+                myfile<<i<<" ";
+                myfile<<array[i].type<<" ";
+                myfile<<array[i].restaurant_ID[j]<<" ";
+                myfile<<array[i].menu_ID[j]<<" ";
+                myfile<<array[i].name<<"\n";
+            }
+            j++;
+        }
+        i++;
+    }
+}
+
+int add_ingredient_restaurant(string ingredient, class ingredient*array,int restID, int location,char type){
+    int i =0;
+    int num_ingredients=0;
+    bool check = false;
+    while(i<num_unique_ingredients){
+        if(ingredient==array[i].name){
+            if(array[i].menu_ID[restID]!=location){
+                array[i].menu_ID[restID]=location;
+                check = true;
+            }
+        }
+        i++;
+    }
+    if(check ==false){
+        int j=0;
+        while(array[j].name!=""){
+            j++;
+        }
+        array[j].name = ingredient;
+        array[j].menu_ID[restID]=location;
+        array[j].type = type;
+        num_ingredients++;
+    }
+    return num_ingredients;
 }
 
 int main() {
@@ -1235,6 +1464,7 @@ int main() {
     string key,str;
     string* ingredients;
     string ingred[20];
+    ingredient ingred_array[num_unique_ingredients];
     ofstream myfile;
     ofstream restfile;
     bool done = false;
@@ -1247,6 +1477,7 @@ int main() {
     int j=0;
     int z=0, q=0,l=0;
     int t=0;
+    int number_of_ingredients=0;
     main_dish* main_price_sort;
     side_dish* side_price_sort;
     drink* drink_price_sort;
@@ -1281,6 +1512,7 @@ int main() {
         }
         if(str[0]!='#' and done ==false and str[0]!='@' and str[0]!='0' and str[0]!='1' and str[0]!='&'){
             ingred[i]=str;
+            number_of_ingredients+=add_ingredient_restaurant(ingred[i],ingred_array,restaurant_id, position, menu_item_id);
             i++;
         }
         if(str[0]=='#'){
@@ -1375,7 +1607,18 @@ int main() {
     side_price_sort = sort_side_dishes_style(restaurants,total_restaurants, side_price_sort);
     drink_price_sort = sort_drinks_style(restaurants,total_restaurants,drink_price_sort);
     print_sort_to_file(2,"/Users/williamburger/Desktop/ES65/ES_65_Database/sort_style.txt", restaurants, total_restaurants, drink_price_sort, main_price_sort, side_price_sort);
+    main_price_sort = sort_main_dishes_calories(restaurants,total_restaurants,main_price_sort);
+    side_price_sort = sort_side_dishes_calories(restaurants,total_restaurants, side_price_sort);
+    drink_price_sort = sort_drinks_calories(restaurants,total_restaurants,drink_price_sort);
+    print_sort_to_file(3,"/Users/williamburger/Desktop/ES65/ES_65_Database/sort_calories.txt", restaurants, total_restaurants, drink_price_sort, main_price_sort, side_price_sort);
+    
+    print_and_sort_ingredients(number_of_ingredients,ingred_array,"/Users/williamburger/Desktop/ES65/ES_65_Database/sort_ingredients.txt");
+    
 }
 
 //How to Access Data: The menus are stored in restaurants[i], where i is the index found in the index file.
-//The individual items can be accessed via drink_menu[i][j]/side_dish_menu[i][j]/main_dish_menu[i][j] where i is the indexed restaurant and j is the order of the it
+//The individual items can be accessed via drink_menu[i][j]/side_dish_menu[i][j]/main_dish_menu[i][j] where i is the indexed restaurant and j is the order of the item.
+
+
+//What functions do we need:
+//Data access, Data manipulation,
