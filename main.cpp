@@ -1261,6 +1261,16 @@ drink* sort_drinks_style(restaurant* restaurants,int total_restaurants,drink* dr
     return drinks_price;
 }
 
+string replaceStrChar(string str, char original, char replacement) {
+    int i =0;
+    while(i<str.length()){
+        if(str[i]==original){
+            str[i]=replacement;
+        }
+        i++;
+    }
+    return str;
+}
 void print_sort_to_file(int sortby,string file_name, restaurant* restaurants,int total_restaurants,drink*drinksort,main_dish*mainsort,side_dish*sidesort){
     class menu this_menu;
     ofstream myfile;
@@ -1300,7 +1310,12 @@ void print_sort_to_file(int sortby,string file_name, restaurant* restaurants,int
             char* nam;
             nam = drinksort[i].get_name();
             while (j<strlen(drinksort[i].get_name())) {
-                myfile<<nam[j];
+                if(nam[j]!=' '){
+                    myfile<<nam[j];
+                }
+                if(nam[j]==' '){
+                    myfile<<'_';
+                }
                 j++;
             }
             myfile<<"\n";
@@ -1335,7 +1350,12 @@ void print_sort_to_file(int sortby,string file_name, restaurant* restaurants,int
             nam = new char[strlen(mainsort[i].get_name())];
             nam = mainsort[i].get_name();
             while (j<strlen(mainsort[i].get_name())) {
-                myfile<<nam[j];
+                if(nam[j]!=' '){
+                    myfile<<nam[j];
+                }
+                if(nam[j]==' '){
+                    myfile<<'_';
+                }
                 j++;
             }
             myfile<<"\n";
@@ -1370,7 +1390,12 @@ void print_sort_to_file(int sortby,string file_name, restaurant* restaurants,int
             nam = new char[strlen(sidesort[i].get_name())];
             nam = sidesort[i].get_name();
             while (j<strlen(sidesort[i].get_name())) {
-                myfile<<nam[j];
+                if(nam[j]!=' '){
+                    myfile<<nam[j];
+                }
+                if(nam[j]==' '){
+                    myfile<<'_';
+                }
                 j++;
             }
             myfile<<"\n";
@@ -1392,6 +1417,8 @@ void print_sort_to_file(int sortby,string file_name, restaurant* restaurants,int
     }
     
 }
+
+
 
 void print_and_sort_ingredients(int total,class ingredient*array,string file_name){
     ofstream myfile;
@@ -1425,6 +1452,7 @@ void print_and_sort_ingredients(int total,class ingredient*array,string file_nam
                 myfile<<array[i].type<<" ";
                 myfile<<array[i].restaurant_ID[j]<<" ";
                 myfile<<array[i].menu_ID[j]<<" ";
+                array[i].name=replaceStrChar(array[i].name, ' ', '_');
                 myfile<<array[i].name<<"\n";
             }
             j++;
@@ -1458,6 +1486,8 @@ int add_ingredient_restaurant(string ingredient, class ingredient*array,int rest
     }
     return num_ingredients;
 }
+
+
 
 int main() {
     restaurant restaurants[num_restaurants];
