@@ -1,0 +1,122 @@
+@0m0 ************************Molly’s first main dish menu item************** 
+Lettuce
+Tomatos
+Jalepenos
+Salsa
+Fish
+#
+Fish Tacos
+Mexican
+14.00
+1
+300
+@0s0 ***Molly’s first side dish menu item***
+Lettuce
+Cheese
+Caesar Dressing
+#
+Caesar Salad
+Italian
+8.00
+1
+150
+@0m1 ***Molly’s second main dish menu item***
+Mozarella Cheese
+Tomatos
+Wheat
+#
+Mozarella Pizza
+Italian
+12.00
+2
+500
+@0d0 ***Molly’s first drink menu item***
+Rum
+Coke
+#
+Roman Coke
+Drink
+8.00
+1
+150
+0
+0
+@0d1 ***Molly’s second drink menu item***
+Pineapple
+Ice Cream
+#
+Pina Colada
+Drink
+8.00
+1
+150
+0
+0
+@0d2 ***Molly’s third drink menu item***
+Mint leaves
+Club Soda
+Rum
+#
+Mojito
+Drink
+7.50
+1
+150
+0
+0
+&************************** END OF MOLLY’s MENU******************************
+@1m0 ***The Orient’s First Menu Item*** 
+Chicken
+Chilua sauce
+Green peppers
+Salsa
+#
+Kung-Pau Chicken
+Chinese
+20.00
+1
+700
+@1m1 ***The Orient’s second main dish menu item***
+Orange peals
+Chicken
+#
+Orange Chicken
+Chinese
+18.00
+2
+500
+@1s0 ***The Orient’s first side dish menu item***
+Lettuce
+Cheese
+Caesar Dressing
+#
+Caesar Salad
+Italian
+11.00
+1
+170
+@1d0 ***The Orient’s first drink menu item***
+Vodka
+Rum
+Tequila
+#
+Scorpian Bowl
+Drink
+15.00
+4
+850
+0
+0
+@1d1 ***The Orient’s second drink menu item***
+Mint leaves
+Club Soda
+Rum
+#
+Mojito
+Drink
+7.50
+1
+150
+0
+0
+&************************** END OF THE ORIENT’s MENU******************************

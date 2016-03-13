@@ -1,9 +1,6 @@
 //
-//  main.cpp
-//  FINAL PROJECT STARTING POINT WILL
-//
-//  Created by William Burger on 2/16/16.
-//  Copyright (c) 2016 William Burger. All rights reserved.
+//  Created by William Burger and Thiago Carvalho on 2/16/16.
+//  Copyright (c) 2016 William Burger and Thiago Carvalho. All rights reserved.
 //
 
 #include <iostream>
@@ -17,29 +14,13 @@
 #define num_unique_ingredients 30
 using namespace std;
 
-
+//*****This is the developer program. It is responsible for the data management for our restaurant suggestion program. It reads in and packages the information from our database to be sent to our user interface program ******************
 //This is the base class for an item on the menu. It will bequeath thsese items to side dish, main dish, and drink classes through inheritance. The menus will be a linked list: the elements link to a previous and next item. Functions consist of setting member elements, printing member elements, and returning member elements or pointers to copies of those elements.
 //Indexing in database for accessing menu item: Restaurant Index|00|Menu item type index|Menu item array index|menu item member function index
-class ingredient{
-public:
-    string name;
-    int restaurant_ID[num_restaurants];
-    int menu_ID[num_restaurants];
-    char type;
-    ingredient(){
-        name = "";
-        for(int i=0;i<num_restaurants;i++){
-            restaurant_ID[i]=i;
-        }
-        for(int i=0;i<num_restaurants;i++){
-            menu_ID[i] = -1;
-        }
-        type = NULL;
-    }
-};
 
 class menu_item{
 protected:
+    //ingredients is a pointer since it will be a dynamically allocated array for any number of ingredients that an item may have
     string* ingredients;
     char* name;
     char style[style_length];
@@ -47,6 +28,7 @@ protected:
     int for_how_many;
     int calories;
     int num_ingredients;
+    //Restaurant ID and position in the restaurant menu are kept track of for easy indexing.
     int rest_id;
     int position_in_restaurant;
     char* restaurant;
@@ -151,7 +133,27 @@ public:
     }
 };
 
-//Function definitions that were not defined in line.
+//This an ingredients class. It is helpful because it keeps track of the menu item and restaurant that a particular ingredient belongs to. That makes it easy to search for in the user interface part of the program.
+
+class ingredient{
+public:
+    string name;
+    int restaurant_ID[num_restaurants];
+    int menu_ID[num_restaurants];
+    char type;
+    ingredient(){
+        name = "";
+        for(int i=0;i<num_restaurants;i++){
+            restaurant_ID[i]=i;
+        }
+        for(int i=0;i<num_restaurants;i++){
+            menu_ID[i] = -1;
+        }
+        type = NULL;
+    }
+};
+
+//This is a function that would help select a style if the user of the program is trying to select a style from user input.
 string print_style_options(){
     string sty;
     cout << "chinese\n" << "diner\n" << "mexican\n" << "thai\n" << "american comfort\n" << "other\n";
@@ -165,6 +167,8 @@ string print_style_options(){
     }
     return sty;
 }
+
+
 void menu_item::set_ingredients(){
     int num,i=0;
     string junk;
@@ -307,6 +311,8 @@ void menu_item::print_menu_item(){
     print_calories();
 }
 
+
+//This is our side_dish class. It's inherited from the menu_item class and then adds the additional element of a character that identifies it as a side dish
 class side_dish:public menu_item{
 private:
     char type = 's';
@@ -349,6 +355,8 @@ side_dish::side_dish(){
 side_dish::~side_dish(){
 }
 
+
+//This is the contact information class. It doesn't come in use in our program at the moment, but going further this could be a point of focus.
 class contact{
 private:
     long telephone;
@@ -438,6 +446,8 @@ void contact::print_website(){
     }
 }
 
+
+//This is the drink class. This is also inherited from the menu item class
 class drink:public menu_item{
 private:
     bool hot;
@@ -556,6 +566,7 @@ main_dish::main_dish(){
 main_dish :: ~main_dish(){
 }
 
+//The menu class is the next level of abstraction. Each menu class has an array of main dishes, side dishes, and drinks.
 class menu{
 private:
     main_dish main_dishes[menu_size]; //00|00-99 are indexes of
@@ -584,6 +595,7 @@ public:
         return num_dishes;
     }
     menu();
+    // The following constructor is necessary when scanning in items so that we can create a menu class from arrays of main dishes, side dishes, and drinks
     menu(main_dish md[],int num1,side_dish sd[],int num2,drink d[], int num3){
         num_dishes = num1;
         num_side_dishes = num2;
@@ -628,6 +640,7 @@ menu::menu(){
     num_drinks=0;
 }
 
+//Classes for seasonal menu, date, and hours that all belong to the restaurant class. These weren't yet implimented in our program by the time it was due. The idea would be to read in the date and time from the computer and double check with a restaurant to see if it had a seasonal menu.
 class date{
 private:
     char day[3]; // mm/dd/yyyy
@@ -642,7 +655,6 @@ date::date(){
     strcpy(month,"00");
     strcpy(year,"0000");
 }
-
 class hours{
 private:
     char open[6];  // hh:mm
@@ -654,14 +666,13 @@ hours::hours(){
     strcpy(open,"00:00");
     strcpy(close,"00:00");
 }
-
 class seasonal_menu:public menu{
     using menu::menu;  //Inheriting constructor from menu, no default constructor necessary for this
     date date_starts;
     date date_ends;
 };
 
-
+//This is the furthest abstracted class, the restaurant class. The restaurant class has it's own menu, a style, a name, as well as distance from the user, what day it is and how that influences the restaurant hours. The latter elements of this class have not yet been implimented.
 class restaurant{
 private:
     menu menu; //00
@@ -712,7 +723,7 @@ restaurant::~restaurant(){
 }
 
 
-//Sorting Functions
+//Sorting Functions. The sorting functions are in several categories. It sorts each list by price, calories, name (alphabetical A-Z), and style (alphabetical A-Z). Every sort uses bubble sort, and each sort is applied to main dishe arrays, side dish arrays, and drink arrays.
 
 main_dish* sort_main_dishes_price(restaurant* restaurants,int total_restaurants,main_dish* main_dish_price){
     class menu this_menu;
@@ -1271,6 +1282,9 @@ string replaceStrChar(string str, char original, char replacement) {
     }
     return str;
 }
+
+//This function takes a integer which tells the function what criteria a list is sorted by, then it takes a string that is the filename that the sorted list is going to be printed to. It needs the restaurants list as well as the arrays for side_dish, main_dish, and drinks so that it can print all to one file when it is arranged by a specific criteria. In the end, there will be files for price sort, calories sort, style sort, name sort, and sort by alphebetized ingredients.
+
 void print_sort_to_file(int sortby,string file_name, restaurant* restaurants,int total_restaurants,drink*drinksort,main_dish*mainsort,side_dish*sidesort){
     class menu this_menu;
     ofstream myfile;
@@ -1279,6 +1293,8 @@ void print_sort_to_file(int sortby,string file_name, restaurant* restaurants,int
     int total_number_main_dishes=0;
     int total_number_side_dishes=0;
     int i=0;
+    
+    //First get the total number of drinks, main dishes and side dishes that will be printed to the files.
     while(i<total_restaurants){
         this_menu = restaurants[i].get_menu();
         total_number_drinks += this_menu.get_num_drinks();
@@ -1297,6 +1313,8 @@ void print_sort_to_file(int sortby,string file_name, restaurant* restaurants,int
         i++;
     }
     i=0;
+    
+    //For all of the drinks, print to the file the restaurant ID, Type, position in the menu, and the sorting criteria (signified by an integer 0,1,2 or 3.
     while(i<total_number_drinks){
         myfile<<i<<" ";
         myfile<<drinksort[i].get_type()<<" ";
@@ -1336,6 +1354,7 @@ void print_sort_to_file(int sortby,string file_name, restaurant* restaurants,int
         i++;
     }
     i=0;
+    //Same print as drinks but for main dishes
     while(i<total_number_main_dishes){
         myfile<<i<<" ";
         myfile<<mainsort[i].get_type()<<" ";
@@ -1376,6 +1395,7 @@ void print_sort_to_file(int sortby,string file_name, restaurant* restaurants,int
         i++;
     }
     i=0;
+    //Same print as above but for side dishes
     while(i<total_number_side_dishes){
         myfile<<i<< " ";
         myfile<<sidesort[i].get_type()<< " ";
@@ -1419,7 +1439,7 @@ void print_sort_to_file(int sortby,string file_name, restaurant* restaurants,int
 }
 
 
-
+//This is a separate function that first sorts an array of all the ingredients and then it prints the ingredients to a specific ingredients file.
 void print_and_sort_ingredients(int total,class ingredient*array,string file_name){
     ofstream myfile;
     myfile.open(file_name);
@@ -1461,6 +1481,8 @@ void print_and_sort_ingredients(int total,class ingredient*array,string file_nam
     }
 }
 
+
+//A function that adds a specific ingredient to an array containing all the ingredients found in all restaurants. It first checks if the type of ingredient exists, if yes then it saves the ingredient to the specific menu ID in the restaurant so there aren't any duplicates
 int add_ingredient_restaurant(string ingredient, class ingredient*array,int restID, int location,char type){
     int i =0;
     int num_ingredients=0;
@@ -1488,7 +1510,7 @@ int add_ingredient_restaurant(string ingredient, class ingredient*array,int rest
 }
 
 
-
+//Driver program
 int main() {
     restaurant restaurants[num_restaurants];
     string key,str;
@@ -1515,11 +1537,14 @@ int main() {
     drink drink_menu[num_restaurants][menu_size];
     main_dish main_dish_menu[num_restaurants][menu_size];
     side_dish side_dish_menu[num_restaurants][menu_size];
-    ifstream rfile("/Users/williamburger/Desktop/ES65/ES_65_Database/menu_items.txt");
-    ifstream rrestfile("/Users/williamburger/Desktop/ES65/ES_65_Database/restaurants.txt");
-    //Scan in menu file
+    
+    //First File is the restaurant file containing ID's of specific restaurants
+    ifstream rfile("menu_items.txt");
+    ifstream rrestfile("restaurants.txt");
+    //Scan in restaurant file
     while(getline(rrestfile,str)){
         int i;
+        //For each restaurant, it scans in an ID and then the string name of the restaurant. If the restaurant has two strings making up its name, this will also account fo it
         string rest_name,rest_name1,rest_name2;
         istringstream iss(str);
         iss >> i >> rest_name1 >>rest_name2;
@@ -1527,12 +1552,15 @@ int main() {
         restaurants[i].set_name(rest_name);
     }
     //Scan in all menus file
+    //Scanning in line by line
     while(getline(rfile,str)){
+        //First checks if &, if this is true, there is a new restaurant and the total restaurants is incrimented.
         if(str[0]=='&'){
             restaurants[restaurant_id].set_menu(main_dish_menu[restaurant_id], z, side_dish_menu[restaurant_id], q, drink_menu[restaurant_id], l);
             i=z=j=q=l=t=0;
             total_restaurants++;
         }
+        //Then checks if @, which signifies the beginning of a menu and will be followed by the restaurant ID, menu item type and the position in the type array
         if(str[0]=='@'){
             key = str;
             istringstream iss(key);
@@ -1540,14 +1568,17 @@ int main() {
             new_menu_item.set_position_in_restaurant(position);
             new_menu_item.set_rest_id(restaurant_id);
         }
+        //This signals the beginning of scanning in ingredients. The end of scanning in ingredients is signaled by #. It also doesn't scan when the first key is an @, 0, or 1.
         if(str[0]!='#' and done ==false and str[0]!='@' and str[0]!='0' and str[0]!='1' and str[0]!='&'){
             ingred[i]=str;
             number_of_ingredients+=add_ingredient_restaurant(ingred[i],ingred_array,restaurant_id, position, menu_item_id);
             i++;
         }
+        //If the first element of the string is #, it is done scanning in ingredients for now
         if(str[0]=='#'){
             done = true;
         }
+        //There is a set order after the ingredients, first it's the name of the new menu item, then it's the style, then price, then how many people the dish is for, then how many calories it's for.
         if(done==true and str[0]!='#'){
             if(j==0){
                 new_menu_item.set_name(str);
@@ -1575,6 +1606,7 @@ int main() {
             }
             j++;
         }
+        //Since main dishes and side dishes only have 5 elements after ingredients, once j=5, then the program can load the menu or side dish item into the array of menu or side dish items for a particular restaurant.
         if (j==5 and (menu_item_id =='m' or menu_item_id == 's')){
             ingredients = new string[i];
             int p=0;
@@ -1597,6 +1629,7 @@ int main() {
             j=0;
             i=0;
         }
+        //If the type is a drink, continue scanning for two more for whether or not the drink is alcoholic and whether or not the drink is hot. Then load the drink into the array of drinks for the given restaurant
         if (j==5 and menu_item_id == 'd' and t==0){
             ingredients = new string[i];
             int p=0;
@@ -1628,27 +1661,27 @@ int main() {
     side_price_sort = sort_side_dishes_price(restaurants,total_restaurants, side_price_sort);
     drink_price_sort = sort_drinks_price(restaurants,total_restaurants,drink_price_sort);
     //Print all sorts to appropriate file name
-    print_sort_to_file(0,"/Users/williamburger/Desktop/ES65/ES_65_Database/sort_price.txt", restaurants, total_restaurants, drink_price_sort, main_price_sort, side_price_sort);
+    print_sort_to_file(0,"sort_price.txt", restaurants, total_restaurants, drink_price_sort, main_price_sort, side_price_sort);
+    //Sorting by name. Re-using the arrays for price_sort, so this is confusing. But the sort for these values is now by name and are the printed to the name file
     main_price_sort = sort_main_dishes_name(restaurants,total_restaurants,main_price_sort);
     side_price_sort = sort_side_dishes_name(restaurants,total_restaurants, side_price_sort);
     drink_price_sort = sort_drinks_name(restaurants,total_restaurants,drink_price_sort);
-    print_sort_to_file(1,"/Users/williamburger/Desktop/ES65/ES_65_Database/sort_name.txt", restaurants, total_restaurants, drink_price_sort, main_price_sort, side_price_sort);
+    print_sort_to_file(1,"sort_name.txt", restaurants, total_restaurants, drink_price_sort, main_price_sort, side_price_sort);
+    //Reusing the same names of the sorted variables. Again, the new sort is for alphabetically by style.
     main_price_sort = sort_main_dishes_style(restaurants,total_restaurants,main_price_sort);
     side_price_sort = sort_side_dishes_style(restaurants,total_restaurants, side_price_sort);
     drink_price_sort = sort_drinks_style(restaurants,total_restaurants,drink_price_sort);
-    print_sort_to_file(2,"/Users/williamburger/Desktop/ES65/ES_65_Database/sort_style.txt", restaurants, total_restaurants, drink_price_sort, main_price_sort, side_price_sort);
+    print_sort_to_file(2,"sort_style.txt", restaurants, total_restaurants, drink_price_sort, main_price_sort, side_price_sort);
+    //New sort is by calories
     main_price_sort = sort_main_dishes_calories(restaurants,total_restaurants,main_price_sort);
     side_price_sort = sort_side_dishes_calories(restaurants,total_restaurants, side_price_sort);
     drink_price_sort = sort_drinks_calories(restaurants,total_restaurants,drink_price_sort);
-    print_sort_to_file(3,"/Users/williamburger/Desktop/ES65/ES_65_Database/sort_calories.txt", restaurants, total_restaurants, drink_price_sort, main_price_sort, side_price_sort);
+    print_sort_to_file(3,"sort_calories.txt", restaurants, total_restaurants, drink_price_sort, main_price_sort, side_price_sort);
     
-    print_and_sort_ingredients(number_of_ingredients,ingred_array,"/Users/williamburger/Desktop/ES65/ES_65_Database/sort_ingredients.txt");
+    //Calling the print and sort function for ingredients array. The array will be sorted alphabetically, and multiples are printed for ingredients showing up more than once in different dishes across different restaurants.
+    print_and_sort_ingredients(number_of_ingredients,ingred_array,"sort_ingredients.txt");
     
 }
 
 //How to Access Data: The menus are stored in restaurants[i], where i is the index found in the index file.
 //The individual items can be accessed via drink_menu[i][j]/side_dish_menu[i][j]/main_dish_menu[i][j] where i is the indexed restaurant and j is the order of the item.
-
-
-//What functions do we need:
-//Data access, Data manipulation,
